@@ -1,9 +1,23 @@
 import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Counted from "@/features/counted/counted";
+import ListCounted from "@/features/list/listCounted";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-
+    <main className="">
+      <Tabs defaultValue="counted">
+        <TabsList className="w-full">
+          <TabsTrigger value="counted">Account</TabsTrigger>
+          <TabsTrigger value="list">Password</TabsTrigger>
+        </TabsList>
+        <TabsContent value="counted">
+          <Counted/>
+        </TabsContent>
+        <TabsContent value="list">
+          <ListCounted/>
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }
