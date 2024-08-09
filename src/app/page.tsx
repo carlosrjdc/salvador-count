@@ -8,8 +8,8 @@ export default function Home() {
     <main className="">
       <Tabs defaultValue="counted">
         <TabsList className="w-full">
-          <TabsTrigger value="counted">Account</TabsTrigger>
-          <TabsTrigger value="list">Password</TabsTrigger>
+          <TabsTrigger value="counted">Contagem</TabsTrigger>
+          <TabsTrigger value="list">Lista</TabsTrigger>
         </TabsList>
         <TabsContent value="counted">
           <Counted/>

@@ -1,46 +1,55 @@
-'use client'
-import { get, set } from 'idb-keyval';
-import { useEffect, useState } from "react"
-import { CountedType } from '../types/countedType';
-import apiClient from '@/config/axios';
-import { Button } from '@/components/ui/button';
+"use client";
+import { get, del, update } from "idb-keyval";
+import { useEffect, useState } from "react";
+import { CountedType } from "../types/countedType";
+import apiClient from "@/config/axios";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import ItemCounted from "./item";
 
 export default function ListCounted() {
-
-  const [listCounted, setListCounted] = useState<CountedType[]>([])
+  const [listCounted, setListCounted] = useState<CountedType[]>([]);
 
   const loadListCounted = async () => {
-    const response = await get('listCounted')
-    if(response) {
-      setListCounted(response)
+    const response = await get("listCounted");
+    if (response) {
+      setListCounted(response);
+    }
+  };
+
+  async function removeItem(index: number) {
+    const response = await get("listCounted");
+    if (response) {
+      response.splice(index, 1);
+      await del("listCounted");
+      await update("listCounted", () => response);
+      setListCounted(response);
     }
   }
 
   async function addCounted() {
-    await apiClient.post('/cadastrarcontagem', listCounted)
+    await axios
+      .post(
+        "https://contagemsalvador.vercel.app/cadastrarcontagem",
+        listCounted
+      )
+      .then((response) => {
+        del("listCounted");
+        setListCounted([]);
+      })
+      .catch();
   }
 
   useEffect(() => {
-    loadListCounted()
-  },[])
+    loadListCounted();
+  }, []);
 
   return (
     <div>
       <Button onClick={addCounted}>Sincronizar</Button>
       {listCounted?.map((counted, index) => (
-        <div key={index} className="p-2">
-          <div>Data: {counted.data}</div>
-          <div>Endereço: {counted.endereco}</div>
-          <div>Unidade: {counted.unidade}</div>
-          <div>Peso: {counted.peso}</div>
-          <div>Caixa: {counted.caixa}</div>
-          <div>Lote: {counted.lote}</div>
-          <div>Sku: {counted.sku}</div>
-          </div>
-          )
-          )
-          }
-        
+        <ItemCounted removeItem={removeItem} key={index} counted={counted} id={index} />
+      ))} 
     </div>
-  )
+  );
 }
